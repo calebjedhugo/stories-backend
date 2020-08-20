@@ -40,18 +40,13 @@ router.route('/').all(async (req, res, next) => {
     res.json('success')
   })
 }).patch(async (req, res) => {
+  //Only an admin can edit something.
+  if(req.user.role !== 'admin'){
+    return res.status(403).json('Only admins may patch')
+  }
+
   //WHERE
   let where = `WHERE id = ${req.body.id}`
-
-  //Only an admin can edit something they didn't create.
-  if(req.user.role !== 'admin'){
-    where += `AND created_by = ${req.user.id}`
-
-    //Only an admin can set the status
-    if(req.body.staus){
-      return res.status(403).json('Only admins may set the status')
-    }
-  }
 
   //SET
   let set = setActiveProps(req.body)
