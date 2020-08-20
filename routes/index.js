@@ -1,7 +1,6 @@
 const router = require('express').Router();
 
-router.get('/', (req, res) => {
-  res.json('success!')
-})
+router.use('/stories', require('./stories'))
+router.use('/auth', require('./user'))
 
 module.exports = router

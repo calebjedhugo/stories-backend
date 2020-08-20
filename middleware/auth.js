@@ -5,12 +5,7 @@ const freshJwt = require('../util/freshJwt')
 
 const verifyJwt = async (req, res, next) => {
   const token = req.header('Authorization');
-  if(!token || token === 'null'){ //No token means they are requesting the client code.
-    let safeUrl = req.originalUrl.replace(/\.\.\//g, '') //Let not leave this just to node.
-    let path = `${__dirname.replace('/middleware', '')}/publichtml${safeUrl}`
-    if(fs.existsSync(path)){ //If we have it in that folder, it should be accessable.
-      return res.sendFile(path)
-    }
+  if(!token || token === 'null'){
     return res.json('Login Required')
   }
   try {
@@ -18,14 +13,14 @@ const verifyJwt = async (req, res, next) => {
     req.user = verified;
     if(req.user){
       if(req.user.exp - (new Date() / 1000) < 3600){ //Freshen up the jwt if expiring in < 10 minutes.
-        try{res.set('Authorization', await freshJwt(req.user._id))}
+        try{res.set('Authorization', await freshJwt(req.user.id))}
         catch(e) {console.log(e, 'Fresh jwt didn\'t work.')}
       }
       next()
     }
-    else res.status(401).json('Login Required');
+    else res.status(401).json('Login Required. Token did not return a user.');
   } catch(e) {
-    res.status(403).json('Login Required');
+    res.status(403).json('Login Required. Token was not valid.');
   }
 }
 
