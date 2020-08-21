@@ -16,9 +16,11 @@ const register = (admin = false, token, hardcodedAdmin = false, email) => {
   let headers = {}
   if(admin){
     userObj.role = 'admin'
-    headers = {headers: {Authorization: token}}
+    if(token){
+      headers = {headers: {Authorization: token}}
+    }
   }
-
+  
   return new Promise((resolve, reject) => {
     axios.post(`${apiLink}auth/register`, userObj, headers).then(res => {
       resolve(userObj)
