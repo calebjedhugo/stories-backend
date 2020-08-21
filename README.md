@@ -10,11 +10,11 @@ This is a REST api for a UI to consume. It includes the following endpoints:
 
 Each non-`auth` endpoint is validated by the files in `./validation`. `auth` endpoints are validated in their own way within the code.
 
-Each user is either assigned the role `user` or `admin`. Only an admin can create an admin
+Each user is either assigned the role `user` or `admin`. Only an admin can create an admin.
 
 The code for each endpoint is found in `./routes`.
 
-To run this server locally, you will need a PostgreSQL server running and the following variable in a `.env` file located at the root:
+To run this server locally, you will need a PostgreSQL server running and the following variables in a `.env` file located at the root:
 
 * PORT=3000
 * env=dev
@@ -27,7 +27,7 @@ To run this server locally, you will need a PostgreSQL server running and the fo
 
 There will, of course, be a little variance depending on your setup.
 
-`./util/conn.js` is set up to automatically set up your database. It should create the tables as soon as you start the server.
+`./util/conn.js` will automatically set up your database as soon as you start the server. You can also see the schema there in the query.
 
 To run the unit tests:
 * start the server (obviously)
