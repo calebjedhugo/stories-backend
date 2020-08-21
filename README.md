@@ -27,6 +27,8 @@ To run this server locally, you will need a PostgreSQL server running and the fo
 
 There will, of course, be a little variance depending on your setup.
 
+`./util/conn.js` is set up to automatically set up your database. It should create the tables as soon as you start the server.
+
 To run the unit tests:
 * start the server (obviously)
 * navigate to the root in a seperate console
