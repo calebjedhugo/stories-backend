@@ -58,22 +58,37 @@ describe('Stories', function() {
 
   it('cannot be edited by a user', async function() {
     let storyId = (await getStory(user.token))[0].id
-    let data = await patchStory(user.token, storyId)
+    let data = await patchStory(user.token, {id: storyId, description: 'change'})
     expect(data).toEqual('Only admins may patch')
   })
 
   it('can be edited by an admin', async function() {
     let storyId = (await getStory(user.token))[0].id
-    let data = await patchStory(admin.token, storyId)
+    let data = await patchStory(admin.token, {id: storyId, description: 'change'})
     expect(data).toEqual('success')
 
     let stories = await getStory(user.token)
+    let tested = 'Database update was not tested.'
     for(let i = stories.length - 1; i > -1; i--){
       if(stories[i].id === storyId){
         expect(stories[i].description).toEqual('change')
+        tested = 'Database update tested!'
         break
       }
     }
+    expect(tested).toEqual('Database update tested!')
+  })
+
+  it('does not allow bad stories in a post', async function(){
+    let expectedError = '"type" with value "bugfi" fails to match the required pattern: /^enhancement|bugfix|development|qa$/'
+    expect(await postStory(user.token, badStoryObj)).toEqual(expectedError)
+    expect(await postStory(admin.token, badStoryObj)).toEqual(expectedError)
+  })
+
+  it('does not allow bad stories in a patch', async function(){
+    let storyId = (await getStory(user.token))[0].id
+    let expectedError = '"type" with value "bugfi" fails to match the required pattern: /^enhancement|bugfix|development|qa$/'
+    expect(await patchStory(admin.token, {id: storyId, type: "bugfi"})).toEqual(expectedError)
   })
 })
 
@@ -95,9 +110,9 @@ const postStory = (token, story) => {
   })
 }
 
-const patchStory = (token, id) => {
+const patchStory = (token, story) => {
   return new Promise((resolve, reject) => {
-    axios.patch(`${apiLink}stories`, {id: id, description: 'change'}, {
+    axios.patch(`${apiLink}stories`, story, {
       headers: {
         Authorization: token
       }
